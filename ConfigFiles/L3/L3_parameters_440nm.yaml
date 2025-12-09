@@ -1,0 +1,8 @@
+# L3 cavity parameters (in um)
+alattice: 0.145
+radius_ratio: 0.3
+slab_thickness: 0.085
+slab_medium_index: 2.75
+x_shift: 0.2
+
+wavelength_range: [0.4, 0.45, 50]

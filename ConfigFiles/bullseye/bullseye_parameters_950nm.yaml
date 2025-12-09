@@ -1,0 +1,10 @@
+# Bullseye cavity parameters (in um)
+central_radius: 0.37
+grating_period: 0.185
+grating_width: 0.1
+num_bridges: 4
+bridge_angle: 2.5
+slab_thickness: 0.18
+slab_medium_index: 3.55
+
+wavelength_range: [0.92, 1, 50]

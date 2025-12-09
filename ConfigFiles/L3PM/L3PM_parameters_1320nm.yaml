@@ -1,0 +1,9 @@
+# L3 photonic molecule parameters (in um)
+alattice: 0.345
+radius_ratio: 0.3
+slab_thickness: 0.22
+slab_medium_index: 3.48
+x_shift: 0.17
+distance: 4
+
+wavelength_range: [1.3, 1.35, 50]
