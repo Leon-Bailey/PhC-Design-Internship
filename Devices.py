@@ -116,18 +116,40 @@ class NanobeamSimulation(Utilities, Optimize):
         # Define hole geometry
         holes_group = []
 
+        # Get Number of Holes
+        num_holes = self.config.num_holes_left + self.config.num_holes_right
+
+        # Generate Array w/ noise values for each hole radius
+        r_noise_array = np.random.normal(loc=0,
+                                             scale= 1e-3,
+                                             size= num_holes )
+        
+        # Generate Array w/ noise values for each hole position
+        x_noise_array = np.random.normal(loc=0,
+                                             scale= 1e-3 ,
+                                             size= num_holes )
+        # Store values into self variables
+        self.noise_x = x_noise_array
+        self.noise_r = r_noise_array
+
+        # Hole counter
+        noise_index = 0
+
         # Design tapering hole geometry
         hole_center_position = (self.config.acenter + self.config.spacer) / 2
 
         for i in range(self.config.num_holes_right):
             if i < self.config.num_holes_optimize:
                 hole_center = [hole_center_position + dx[i], 0, 0]
-                hole_radius = self.config.radius_ratio * self.tapered_lattice_constant(
-                    i) + dr[i]
+                hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
+                    i) + dr[i]) + self.noise_r[noise_index])
+                    noise_index += 1
             else:
                 hole_center = [hole_center_position, 0, 0]
-                hole_radius = self.config.radius_ratio * self.tapered_lattice_constant(
-                    i)
+                hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
+                    i)) + self.noise_r[noise_index])
+                    noise_index += 1
+
             holes_group.append(
                 td.Cylinder(
                     center=hole_center,
@@ -142,12 +164,14 @@ class NanobeamSimulation(Utilities, Optimize):
         for i in range(self.config.num_holes_left):
             if i < self.config.num_holes_optimize:
                 hole_center = [hole_center_position - dx[i], 0, 0]
-                hole_radius = self.config.radius_ratio * self.tapered_lattice_constant(
-                    i) + dr[i]
+                hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
+                    i) + dr[i]) + self.noise_r[noise_index])
+                    noise_index += 1
             else:
                 hole_center = [hole_center_position, 0, 0]
-                hole_radius = self.config.radius_ratio * self.tapered_lattice_constant(
-                    i)
+                hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
+                    i)) + self.noise_r[noise_index])
+                    noise_index += 1
 
             holes_group.append(
                 td.Cylinder(
