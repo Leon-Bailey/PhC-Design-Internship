@@ -30,6 +30,14 @@ class NanobeamSimulation(Utilities, Optimize):
             getattr(ConfigurationClass, self.config_filename), default_config,
             design_args)
 
+        #Extract Noise Parameters
+        self.sigma_r = self.config.sigma_r    
+        self.sigma_x = self.config.sigma_x
+        self.noise_seed = self.config.noise_seed
+
+        self.noise_r = None
+        self.noise_x = None
+
         self.define_nanobeam_geometry()
 
         super().__init__()
@@ -119,20 +127,24 @@ class NanobeamSimulation(Utilities, Optimize):
         # Get Number of Holes
         num_holes = self.config.num_holes_left + self.config.num_holes_right
 
-        # Generate Array w/ noise values for each hole radius
-        r_noise_array = np.random.normal(loc=0,
-                                             scale= 1e-3,
-                                             size= num_holes )
-        
-        # Generate Array w/ noise values for each hole position
-        x_noise_array = np.random.normal(loc=0,
-                                             scale= 1e-3 ,
-                                             size= num_holes )
-        # Store values into self variables
-        self.noise_x = x_noise_array
-        self.noise_r = r_noise_array
+        # Generate Radii and X Noise
+        if self.noise_r is None:
+            if self.noise_seed is not None:
+                np.random.seed(self.noise_seed)
 
-        # Hole counter
+            self.noise_r = np.random.normal(
+                loc=0,
+                scale=self.sigma_r,
+                size=num_holes
+            )
+
+            self.noise_x = np.random.normal(
+                loc=0,
+                scale=self.sigma_x,
+                size=num_holes
+            )
+
+        # Hole Counter
         noise_index = 0
 
         # Design tapering hole geometry
@@ -143,12 +155,12 @@ class NanobeamSimulation(Utilities, Optimize):
                 hole_center = [hole_center_position + dx[i], 0, 0]
                 hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
                     i) + dr[i]) + self.noise_r[noise_index])
-                    noise_index += 1
+                noise_index += 1
             else:
                 hole_center = [hole_center_position, 0, 0]
                 hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
                     i)) + self.noise_r[noise_index])
-                    noise_index += 1
+                noise_index += 1
 
             holes_group.append(
                 td.Cylinder(
@@ -166,12 +178,12 @@ class NanobeamSimulation(Utilities, Optimize):
                 hole_center = [hole_center_position - dx[i], 0, 0]
                 hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
                     i) + dr[i]) + self.noise_r[noise_index])
-                    noise_index += 1
+                noise_index += 1
             else:
                 hole_center = [hole_center_position, 0, 0]
                 hole_radius = ((self.config.radius_ratio * self.tapered_lattice_constant(
                     i)) + self.noise_r[noise_index])
-                    noise_index += 1
+                noise_index += 1
 
             holes_group.append(
                 td.Cylinder(

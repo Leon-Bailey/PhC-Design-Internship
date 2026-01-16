@@ -93,6 +93,11 @@ class NanobeamConfig(MonitorConfig, DipoleSourceConfig, SimulationConfig):
     taper_polygon_length: float = 12
     taper_polygon_tip_width: float = 0.15
 
+    # Noise Default
+    sigma_r: float = 1e-3
+    sigma_x: float = 0.0
+    noise_seed: Optional[int] = None
+
 
 @dataclass
 class L3Config(MonitorConfig, DipoleSourceConfig, SimulationConfig):
