@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 import tidy3d as td
+from typing import Optional
 
 
 @dataclass
@@ -92,9 +93,9 @@ class NanobeamConfig(MonitorConfig, DipoleSourceConfig, SimulationConfig):
     taper_polygon: bool = False
     taper_polygon_length: float = 12
     taper_polygon_tip_width: float = 0.15
-
+    
     # Noise Default
-    sigma_r: float = 1e-3
+    sigma_r: float = 0.0
     sigma_x: float = 0.0
     noise_seed: Optional[int] = None
 

@@ -29,18 +29,30 @@ class NanobeamSimulation(Utilities, Optimize):
         self.config = update_config_file(
             getattr(ConfigurationClass, self.config_filename), default_config,
             design_args)
-
-        #Extract Noise Parameters
-        self.sigma_r = self.config.sigma_r    
-        self.sigma_x = self.config.sigma_x
-        self.noise_seed = self.config.noise_seed
-
-        self.noise_r = None
-        self.noise_x = None
-
+    
         self.define_nanobeam_geometry()
 
         super().__init__()
+
+    def generate_noise(self):
+
+        # Get Number of Holes
+        num_holes = self.config.num_holes_left + self.config.num_holes_right
+
+        # Generate Radii and X Noise
+
+        self.noise_r = np.random.normal(
+                loc=0,
+                scale=self.config.sigma_r,
+                size=num_holes
+            )
+
+        self.noise_x = np.random.normal(
+                loc=0,
+                scale=self.config.sigma_x,
+                size=num_holes
+            )
+        print(self.noise_r)
 
     def tapered_lattice_constant(self, index, taper_function="linear"):
         """
@@ -72,6 +84,7 @@ class NanobeamSimulation(Utilities, Optimize):
         """
         Define the Tidy3D nanobeam geometry given the design arguments
         """
+        
         def nanobeam_taper_polygon(self):
 
             if self.config.slab_dimensions[0] == td.inf:
@@ -102,6 +115,9 @@ class NanobeamSimulation(Utilities, Optimize):
 
             self.structures.append(self.taper_polygon)
 
+        # Calls generate noise function to create noise arrays--self.noise_r + self.noise_x 
+        self.generate_noise()
+
         # Initialize list for simulation structures. Add the additional structures.
         self.structures = []
         self.structures.extend(self.config.structures)
@@ -123,26 +139,6 @@ class NanobeamSimulation(Utilities, Optimize):
 
         # Define hole geometry
         holes_group = []
-
-        # Get Number of Holes
-        num_holes = self.config.num_holes_left + self.config.num_holes_right
-
-        # Generate Radii and X Noise
-        if self.noise_r is None:
-            if self.noise_seed is not None:
-                np.random.seed(self.noise_seed)
-
-            self.noise_r = np.random.normal(
-                loc=0,
-                scale=self.sigma_r,
-                size=num_holes
-            )
-
-            self.noise_x = np.random.normal(
-                loc=0,
-                scale=self.sigma_x,
-                size=num_holes
-            )
 
         # Hole Counter
         noise_index = 0
