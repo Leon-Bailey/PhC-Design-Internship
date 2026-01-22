@@ -99,6 +99,9 @@ class NanobeamConfig(MonitorConfig, DipoleSourceConfig, SimulationConfig):
     sigma_x: float = 0.0
     noise_seed: Optional[int] = None
 
+    # Target Wavelength
+    target_wavelength: Optional[float] = None
+
 
 @dataclass
 class L3Config(MonitorConfig, DipoleSourceConfig, SimulationConfig):

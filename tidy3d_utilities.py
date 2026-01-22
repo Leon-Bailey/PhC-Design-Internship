@@ -464,7 +464,14 @@ class Utilities:
             resonance_data = resonance_data.where(
                 resonance_data.freq > freq_range[-1], drop=True)
 
-        freq_index = np.argmin(np.asarray(resonance_data.error))
+       # Selects Mode of Interest by Checking for designated wavelength of interest
+       # If not present selects mode with least ammount of error
+        if(self.config.target_wavelength is None):
+            freq_index = np.argmin(np.asarray(resonance_data.error))
+        else:
+            res_wavelengths = td.C_0 / np.asarray(resonance_data.freq) * 1e3
+            freq_index = np.argmin(np.abs(res_wavelengths - self.config.target_wavelength))
+
         self.resonant_frequency = np.asarray(resonance_data.freq)[freq_index]
         self.index = self.find_frequency_index(freq_range, self.resonant_frequency)
         self.quality_factor = np.asarray(resonance_data.Q)[freq_index]

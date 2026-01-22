@@ -16,3 +16,6 @@ taper_polygon_tip_width: 0.15
 
 # Simulation wavelength range
 wavelength_range: [1.3, 1.4, 50]
+
+# Target Wavelength
+target_wavelength: null
