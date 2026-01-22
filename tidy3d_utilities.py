@@ -466,6 +466,7 @@ class Utilities:
 
        # Selects Mode of Interest by Checking for designated wavelength of interest
        # If not present selects mode with least ammount of error
+       # Target Wavelength (Float)-(nm)
         if(self.config.target_wavelength is None):
             freq_index = np.argmin(np.asarray(resonance_data.error))
         else:
